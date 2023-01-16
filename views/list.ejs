@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <meta charset="UTS-8">
+      <title>testWebSocket</title>
+      
+      <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+      
+      <link rel="stylesheet" href="../public/list.css">
+  </head>
+  <body>
+
+    <%- include('header.html') %>
+
+    <div id="postSchedule" class="container list-background"></div>
+
+    <script>
+      $(document).ready(() => {
+        reloadPost()
+      })
+
+      // 게시글 불러오기
+      function reloadPost() {
+        $.ajax({
+          type: 'GET',
+          url: '/api/post',
+          data: {},
+          success: function (response) {
+            let doc = response['posts']
+            $('#postSchedule').empty()
+
+            for(let i = 0; i < doc.length; i++) {
+              let postId = doc[i]['postId']
+              let title = doc[i]['title']
+              let date = doc[i]['date']
+              let writer = doc[i]['writer']
+
+              let template = `<ul class="list-group mt-3">
+                                <li class="list-group-item">
+                                  <h3>${title}</h3>
+                                  <p>${date}</p>
+                                  <button type="button" class="btn btn-warning" onclick="postDetail(event)" data-id="${postId}">상세조회</button>
+                                  <button type="button" class="btn btn-danger" onclick="postDelete(event)" data-id="${postId}">삭제</button>
+                                  <button type="button" class="btn btn-primary" onclick="postChatroom(event)" data-id="${writer}">채팅하기</button>
+                                </li>
+                              </ul>`
+
+              $('#postSchedule').append(template)
+            }
+          },
+          error: function (response) {
+            alert(response.responseJSON.message)
+            window.location.href = '/'
+          }
+        })
+      }
+
+      // 상세조회
+      function postDetail(e) {
+        let postId = e.target.dataset.id
+
+        window.location.href = `/detail/${postId}`
+      }
+
+      // 삭제
+      function postDelete(e) {
+        let postId = e.target.dataset.id
+
+        $.ajax({
+          type : 'DELETE',
+          url : `/api/post/${postId}`,
+          data : {postId},
+          success : function (response) {
+            alert(response.message)
+            window.location.reload()
+          },
+          error : function (response) {
+            alert(response.responseJSON.message)
+            window.location.reload()
+          }
+        })
+      }
+
+      // chatroom 정보 전달
+      function postChatroom(e) {
+        let writer = e.target.dataset.id
+
+        $.ajax({
+          type : 'POST',
+          url : '/api/chatroom',
+          data : {writer},
+          success : function (response) {
+            alert(response.message)
+            window.location.href = '/chat'
+          },
+          error : function (response) {
+            alert(response.responseJSON.message)
+            window.location.reload()
+          }
+        })
+      }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+
+  </body>
+</html>
+
+
+

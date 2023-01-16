@@ -1,0 +1,42 @@
+.main-background {
+  width: 100vw;
+  height: 100vh;
+
+  position: relative;
+
+  background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://cdn.popsci.co.kr/news/photo/202205/11970_7105_2625.jpg');
+  background-position: center;
+  background-size: 30%;
+}
+
+.content-background {
+  position: absolute;
+
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+
+  width: 300px;
+  height: 500px;
+  background-color: #fff;
+  border-radius: 25px;
+
+  text-align: center;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.content-background h5 {
+  color: #C0C0C0;
+}
+
+.content-background p {
+  color: #C0C0C0;
+}
+
+div h1 {
+  font-family: cursive;
+  font-weight: bold;
+}
