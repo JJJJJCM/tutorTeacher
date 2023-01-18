@@ -22,10 +22,8 @@
     
         <div class="col-9 p-0">
           <div class="chat-room">
-            <ul class="list-group chat-content">
-              <li><span class="chat-box">채팅방1 내용</span></li>
-              <li><span class="chat-box">채팅방1 내용</span></li>
-              <li><span class="chat-box mine">채팅방1 내용</span></li>
+            <ul class="list-group chat-content" id="chat-get">
+              <!-- <li><span class="chat-box mine">채팅방1 내용</span></li> -->
             </ul>
             <div class="input-group">
               <input class="form-control" id="chat-input">
@@ -62,8 +60,8 @@
               let title = chatroomData[i]['title']
 
               let template = `<li class="list-group-item chatroom" data-id="${chatroomId}" onclick="getChatroomId(event)">
-                                <h6 style="font-weight : bold;" onclick="event.cancelBubble=true">${title}</h6>
-                                <h6 style="font-size: 12px;" onclick="event.cancelBubble=true">${user1}에게 ${user2}가 채팅을 요청하였습니다.</h6>
+                                <h6 style="font-weight : bold;">${title}</h6>
+                                <h6 style="font-size: 12px;">${user1}에게 ${user2}가 채팅을 요청하였습니다.</h6>
                               </li>`
 
               $('#chatroom').append(template)
@@ -76,17 +74,28 @@
         })
       }
 
-      function test() {
-        console.log('ddd')
-      }
-
       // 메세지 발행
-      let targetChatroomId  // 부모의 unique한 _id값을 가져오기 위해
+      let chatroomId
+      let eventSource
 
       function getChatroomId(e) {
-        e.stopPropagation()
-        targetChatroomId = e.target.dataset.id
-        console.log(targetChatroomId)
+        if(eventSource) eventSource.close() // eventSource !== undefined
+
+        chatroomId = e.currentTarget.dataset.id
+        $('#chat-get').empty()
+
+        eventSource = new EventSource(`/api/message/${chatroomId}`)
+        eventSource.addEventListener('test', function({data}) { // event에서 객체 분해 할당함
+
+          JSON.parse(data).map(({userId, content}) => { // 객체 분해 할당
+            let template = `<li><span class="chat-box">
+                              <h6>${userId}</h6>
+                              <h5>${content}</h5>
+                            </span></li>`
+            
+            $('#chat-get').append(template)
+          })
+        })
       }
 
       function postMessage() {
@@ -95,10 +104,9 @@
         $.ajax({
           type : 'POST',
           url : '/api/message',
-          data : {chatroomId : targetChatroomId, content},
+          data : {chatroomId, content},
           success : function (response) {
-            alert(response.message)
-            window.location.reload()
+            
           },
           error : function (response) {
             alert(response.responseJSON.message)

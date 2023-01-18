@@ -50,7 +50,7 @@
           data : {nickname, password, confirm},
           success : function (response) {
             alert(response.message)
-            window.location.reload()
+            window.location.href = '/login'
           },
           error : function (response) {
             alert(response.responseJSON.message)

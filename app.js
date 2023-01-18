@@ -10,9 +10,14 @@ const chatroomRouter = require('./routes/chatroom.js')
 const messageRouter = require('./routes/message.js')
 const authMiddleware = require('./middlewares/auth-middleware.js')
 
-const app = express()
+const app = express() // 이거 밑에다 추가하면 됨
 const port = 8080
 connect()
+
+// socket.io
+const http = require('http').createServer(app);
+const { Server } = require("socket.io");
+const io = new Server(http);
 
 app.set('view engine', 'ejs')
 app.use('/public', express.static('public'))
@@ -48,7 +53,7 @@ app.get('/signup', (req, res) => {
   res.render('signup.ejs')
 })
 
-// 업로드패이지-------------------------------------
+// 업로드 패이지
 app.get('/upload', (req, res) => {
   res.render('upload.ejs')
 })
@@ -60,14 +65,34 @@ app.get('/upload/:imageName', (req, res) => {
   
   res.sendFile(__dirname + '/public/image/' + imageName)
 })
-//-------------------------------------------------
 
 // 채팅방 페이지
 app.get('/chat', authMiddleware, (req, res) => {
   res.render('chat.ejs')
 })
 
-app.listen(port, () => {
+// socket.io 페이지
+app.get('/socket', (req, res) => {
+  res.render('socket.ejs')
+})
+
+// websocket 양방향 통신, socket.io 라이브러리 사용
+io.on('connection', (socket) => {
+  console.log('유저 접속 됨')
+
+  socket.on('roomSend', (data) => {
+    io.to('room1').emit('broadcast', data)
+  })
+  socket.on('joinroom', (data) => {
+    socket.join('room1')
+  })
+
+  socket.on('user-send', (data) => {  // 클라이언트 -> 서버, eventlistener
+    io.emit('broadcast', data)  // 서버 -> 클라이언트, 모든 유저에게
+  })
+})
+
+http.listen(port, () => {
   console.log(port, '포트로 서버가 열렸어요!')
 })
 
