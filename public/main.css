@@ -1,0 +1,38 @@
+body {
+  background-image: linear-gradient(to right, LightSkyBlue, #E0FFFF);
+}
+
+.main-background {
+  width: 100vw;
+  height: 200px;
+  background-color: black;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  color: white;
+  font-family: cursive;
+  font-weight: bold;
+
+  margin-top: 500px;
+}
+
+.snowflake {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: white;
+  position: absolute;
+  top: -8px;
+  /* animation: fall 10s linear; */
+}
+
+@keyframes fall {
+  from {}
+  to {
+    transform: translateY(100vh);
+    opacity: 0;
+  }
+}

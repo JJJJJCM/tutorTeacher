@@ -27,8 +27,12 @@ app.use(express.json())
 
 app.use('/api', [postRouter, userRouter, chatroomRouter, messageRouter]) // upload 추가하기
 
-// 스케줄 입력 페이지
 app.get('/', (req, res) => {
+  res.render('main.ejs')
+})
+
+// 스케줄 입력 페이지
+app.get('/write', (req, res) => {
   res.render('post.ejs')
 })
 
@@ -67,7 +71,7 @@ app.get('/upload/:imageName', (req, res) => {
 })
 
 // 채팅방 페이지
-app.get('/chat', authMiddleware, (req, res) => {
+app.get('/chat', (req, res) => {
   res.render('chat.ejs')
 })
 
