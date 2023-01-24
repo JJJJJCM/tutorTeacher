@@ -8,10 +8,9 @@ const postRouter = require('./routes/post.js')
 const userRouter = require('./routes/user.js')
 const chatroomRouter = require('./routes/chatroom.js')
 const messageRouter = require('./routes/message.js')
-const authMiddleware = require('./middlewares/auth-middleware.js')
+require('dotenv').config()
 
 const app = express() // 이거 밑에다 추가하면 됨
-const port = 8080
 connect()
 
 // socket.io
@@ -96,10 +95,6 @@ io.on('connection', (socket) => {
   })
 })
 
-http.listen(port, () => {
-  console.log(port, '포트로 서버가 열렸어요!')
+http.listen(process.env.PORT, () => {
+  console.log(process.env.PORT, '포트로 서버가 열렸어요!')
 })
-
-
-
-
